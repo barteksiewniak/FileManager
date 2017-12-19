@@ -10,4 +10,11 @@ public final class Paths {
 
         public static final String MAIN_APPLICATION = "/fxmls/MainController.fxml";
     }
+
+    public static final class IMAGES {
+        private IMAGES() {
+        }
+
+        public static final String APPLICATION_ICON = "/images/disk-icon.png";
+    }
 }
