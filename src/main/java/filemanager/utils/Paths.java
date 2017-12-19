@@ -8,6 +8,6 @@ public final class Paths {
         private VIEWS() {
         }
 
-        public static final String MAIN_APPLICATION = "../fxmls/MainController.fxml";
+        public static final String MAIN_APPLICATION = "/fxmls/MainController.fxml";
     }
 }
