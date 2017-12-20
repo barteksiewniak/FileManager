@@ -1,10 +1,14 @@
 package filemanager.core;
 
+import filemanager.utils.ApplicationProperties;
+
 import java.io.File;
+import java.io.IOException;
 
 public class HDDSpaceTracker {
-    public String getAmountOfSpaceFromSelectedDrive(TypeForHDDSpaceAmountSelector selector) {
-        final String PATH_NAME = "C:/";
+    private ApplicationProperties properties = new ApplicationProperties();
+    public String getAmountOfSpaceFromSelectedDrive(TypeForHDDSpaceAmountSelector selector) throws IOException {
+        final String PATH_NAME = properties.getStringValueFromPropertiesForKey("hddspacetrackerpath");
         File file = new File(PATH_NAME);
         String result = "";
         if (selector == TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT) {

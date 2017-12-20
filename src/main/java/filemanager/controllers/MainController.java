@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
+import java.io.IOException;
+
 public class MainController {
 
     @FXML
@@ -15,7 +17,7 @@ public class MainController {
     Label totalSpaceLabel;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
         totalSpaceLabel.textProperty().setValue(hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(
                 HDDSpaceTracker.TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT));
