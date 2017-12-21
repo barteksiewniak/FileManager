@@ -11,13 +11,13 @@ public class HDDSpaceTracker {
         final String PATH_NAME = properties.getStringValueFromPropertiesForKey("hddspacetrackerpath");
         File file = new File(PATH_NAME);
         String result = "";
+
         if (selector == TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT) {
             result = String.valueOf(file.getFreeSpace());
-
         } else if (selector == TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT) {
             result = String.valueOf(file.getTotalSpace());
-
         }
+
         return separateSpaceByThreeCharsWithSpace(result);
     }
 
@@ -27,9 +27,11 @@ public class HDDSpaceTracker {
         String[] temporaryArrayWithSplittedChars = temporaryStringBuilderWithReversedString.split("(?<=\\G...)");
         // here we save the result
         StringBuilder result = new StringBuilder();
+
         for (String row : temporaryArrayWithSplittedChars) {
             result.append(row + " ");
         }
+        
         // again reversing the string for proper order
         return new StringBuilder(result).reverse().toString().trim();
     }
