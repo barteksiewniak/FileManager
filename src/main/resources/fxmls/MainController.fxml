@@ -7,20 +7,22 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filemanager.controllers.MainController">
+<GridPane alignment="center" hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filemanager.controllers.MainController">
    <columnConstraints>
+      <ColumnConstraints />
       <ColumnConstraints />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints />
+      <RowConstraints />
    </rowConstraints>
    <children>
-      <Pane fx:id="mainPane" prefHeight="534.0" prefWidth="511.0">
+      <Pane fx:id="mainPane" prefHeight="1180.0" prefWidth="2078.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
             <Label fx:id="freeSpaceLabel" layoutX="21.0" layoutY="6.0" text="free space" />
-            <Label fx:id="totalSpaceLabel" layoutX="123.0" layoutY="6.0" text="total space" />
-            <ListView fx:id="leftDisplay" layoutX="23.0" layoutY="43.0" prefHeight="439.0" prefWidth="205.0" />
-            <ListView fx:id="rightDisplay" layoutX="256.0" layoutY="48.0" prefHeight="439.0" prefWidth="205.0" />
+            <Label fx:id="totalSpaceLabel" layoutX="129.0" layoutY="6.0" text="total space" />
+            <ListView fx:id="leftDisplay" layoutX="168.0" layoutY="122.0" onKeyReleased="#keyPressed" prefHeight="735.0" prefWidth="533.0" />
+            <ListView fx:id="rightDisplay" layoutX="840.0" layoutY="112.0" prefHeight="728.0" prefWidth="567.0" />
          </children></Pane>
    </children>
 </GridPane>

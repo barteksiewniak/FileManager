@@ -8,7 +8,7 @@ import java.io.IOException;
 public class HDDSpaceTracker {
     private ApplicationProperties properties = new ApplicationProperties();
     public String getAmountOfSpaceFromSelectedDrive(TypeForHDDSpaceAmountSelector selector) throws IOException {
-        final String PATH_NAME = properties.getStringValueFromPropertiesForKey("hddspacetrackerpath");
+        final String PATH_NAME = properties.getStringValueFromPropertiesForKey("hdd_space_tracker_path");
         File file = new File(PATH_NAME);
         String result = "";
 
@@ -31,7 +31,7 @@ public class HDDSpaceTracker {
         for (String row : temporaryArrayWithSplittedChars) {
             result.append(row + " ");
         }
-        
+
         // again reversing the string for proper order
         return new StringBuilder(result).reverse().toString().trim();
     }

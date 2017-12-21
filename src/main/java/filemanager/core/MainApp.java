@@ -1,5 +1,6 @@
 package filemanager.core;
 
+import filemanager.utils.ApplicationProperties;
 import filemanager.utils.Paths;
 import filemanager.utils.StageManager;
 import javafx.application.Application;
@@ -17,11 +18,12 @@ public class MainApp extends Application {
     @FXML
     private StageManager stageManager;
     private static final Logger LOGGER = LogManager.getLogger(MainApp.class);
+    private ApplicationProperties properties;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource(Paths.VIEWS.MAIN_APPLICATION));
-        primaryStage.setTitle("File Manager");
+        primaryStage.setTitle("File Manager " + properties.getStringValueFromPropertiesForKey("version_number"));
         primaryStage.setScene(new Scene(root));
         primaryStage.setMaximized(true);
         primaryStage.getIcons().add(new Image(Paths.IMAGES.APPLICATION_ICON));
@@ -35,5 +37,6 @@ public class MainApp extends Application {
     public MainApp() {
         LOGGER.info("Application started.");
         stageManager = new StageManager();
+        properties = new ApplicationProperties();
     }
 }
