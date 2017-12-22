@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
@@ -21,8 +21,8 @@
          <children>
             <Label fx:id="freeSpaceLabel" layoutX="21.0" layoutY="6.0" text="free space" />
             <Label fx:id="totalSpaceLabel" layoutX="129.0" layoutY="6.0" text="total space" />
-            <ListView fx:id="leftDisplay" layoutX="-11.0" layoutY="55.0" onKeyReleased="#keyPressed" prefHeight="787.0" prefWidth="954.0" />
-            <ListView fx:id="rightDisplay" layoutX="956.0" layoutY="55.0" prefHeight="787.0" prefWidth="954.0" />
+            <TableView fx:id="leftDisplay" layoutX="-13.0" layoutY="23.0" onKeyPressed="#keyPressed" prefHeight="875.0" prefWidth="960.0" />
+            <TableView fx:id="rightDisplay" layoutX="955.0" layoutY="23.0" onKeyPressed="#keyPressed" prefHeight="875.0" prefWidth="960.0" />
          </children></Pane>
    </children>
 </GridPane>

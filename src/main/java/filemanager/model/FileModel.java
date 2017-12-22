@@ -1,14 +1,14 @@
 package filemanager.model;
 
 import java.io.File;
-import java.time.LocalDate;
 
 public class FileModel {
     private PositionType type;
     private File file;
+    private String name;
     private String extension;
     private String size;
-    private LocalDate date;
+    private String lastModifiedTime;
     private String attributes;
 
     public PositionType getType() {
@@ -43,14 +43,6 @@ public class FileModel {
         this.size = size;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
     public String getAttributes() {
         return attributes;
     }
@@ -59,14 +51,31 @@ public class FileModel {
         this.attributes = attributes;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastModifiedTime() {
+        return lastModifiedTime;
+    }
+
+    public void setLastModifiedTime(String lastModifiedTime) {
+        this.lastModifiedTime = lastModifiedTime;
+    }
+
     @Override
     public String toString() {
         return "FileModel{" +
                 "type=" + type +
                 ", file=" + file +
+                ", name='" + name + '\'' +
                 ", extension='" + extension + '\'' +
                 ", size='" + size + '\'' +
-                ", date=" + date +
+                ", lastModifiedTime='" + lastModifiedTime + '\'' +
                 ", attributes='" + attributes + '\'' +
                 '}';
     }

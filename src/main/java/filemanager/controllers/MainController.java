@@ -9,7 +9,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -22,9 +24,9 @@ public class MainController {
     @FXML
     private Label totalSpaceLabel;
     @FXML
-    private ListView<FileModel> leftDisplay;
+    private TableView<FileModel> leftDisplay;
     @FXML
-    private ListView<FileModel> rightDisplay;
+    private TableView<FileModel> rightDisplay;
 
     private FileAndFolderGatherer fileAndFolderGatherer;
     private ObservableList<FileModel> itemsForLeftDisplay;
@@ -57,6 +59,8 @@ public class MainController {
         String rootPath = properties.getStringValueFromPropertiesForKey("root_path");
         fillLeftDisplayWithData(rootPath);
         fillRightDisplayWithData(rootPath);
+        createHeadersForTables(leftDisplay);
+        createHeadersForTables(rightDisplay);
     }
 
     private void fillLeftDisplayWithData(String path) {
@@ -77,5 +81,17 @@ public class MainController {
             leftDisplay.setItems(itemsForLeftDisplay);
             leftDisplay.refresh();
         }
+    }
+
+    public void createHeadersForTables(TableView<FileModel> table) {
+        TableColumn file = new TableColumn("name");
+        file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
+        TableColumn extension = new TableColumn("extension");
+        extension.setCellValueFactory(new PropertyValueFactory<FileModel, String>("extension"));
+        TableColumn size = new TableColumn("size");
+        size.setCellValueFactory(new PropertyValueFactory<FileModel, String>("size"));
+        TableColumn date = new TableColumn("date");
+        date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
+        table.getColumns().addAll(file, extension, size, date);
     }
 }
