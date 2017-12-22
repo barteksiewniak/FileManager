@@ -21,29 +21,32 @@ public class FileToModelListConverter {
         ArrayList<FileModel> destination = new ArrayList<>();
 
         source.forEach(x -> {
-            FileModel model = new FileModel();
-            model.setFile(x);
-            if (x.isDirectory()) {
-                model.setType(PositionType.FOLDER);
-                model.setName("[" + x.getName() + "]");
-                model.setSize("<DIR>");
-            } else {
-                model.setType(PositionType.FILE);
-                String baseName = FilenameUtils.getBaseName(x.getName());
-                String extension = FilenameUtils.getExtension(x.getName());
-                model.setName(baseName);
-                model.setExtension(extension);
+            if (!x.isHidden()) {
+                FileModel model = new FileModel();
+                model.setFile(x);
+                if (x.isDirectory()) {
+                    model.setType(PositionType.FOLDER);
+                    model.setName("[" + x.getName() + "]");
+                    model.setSize("<DIR>");
+                } else {
+                    model.setType(PositionType.FILE);
+                    String baseName = FilenameUtils.getBaseName(x.getName());
+                    String extension = FilenameUtils.getExtension(x.getName());
+                    model.setName(baseName);
+                    model.setExtension(extension);
+                }
+                try {
+                    BasicFileAttributes attr = Files.readAttributes(x.toPath(), BasicFileAttributes.class);
+                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                    String date = df.format(attr.lastModifiedTime().toMillis());
+                    model.setLastModifiedTime(date);
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage());
+                }
+                destination.add(model);
             }
-            try {
-                BasicFileAttributes attr = Files.readAttributes(x.toPath(), BasicFileAttributes.class);
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-                String date = df.format(attr.lastModifiedTime().toMillis());
-                model.setLastModifiedTime(date);
-            } catch (IOException e) {
-                LOGGER.error(e.getMessage());
-            }
-            destination.add(model);
         });
+        destination.sort((f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
         return destination;
     }
 }
