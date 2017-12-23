@@ -20,7 +20,7 @@
             <TableView fx:id="leftDisplay" layoutX="-7.0" layoutY="100.0" onKeyPressed="#keyPressed" prefHeight="798.0" prefWidth="954.0" />
             <TableView fx:id="rightDisplay" layoutX="961.0" layoutY="100.0" onKeyPressed="#keyPressed" prefHeight="798.0" prefWidth="954.0" />
             <ComboBox fx:id="driveSelect" layoutX="14.0" layoutY="57.0" prefHeight="25.0" prefWidth="58.0" />
-            <Label fx:id="HDDSpaceInfo" layoutX="92.0" layoutY="61.0" prefHeight="17.0" prefWidth="431.0" text="Label">
+            <Label fx:id="hddSpaceInfo" layoutX="92.0" layoutY="61.0" prefHeight="17.0" prefWidth="431.0" text="Label">
                <font>
                   <Font name="System Bold" size="10.0" />
                </font></Label>
