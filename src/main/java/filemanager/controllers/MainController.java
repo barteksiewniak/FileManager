@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -23,13 +24,13 @@ import java.io.IOException;
 
 public class MainController {
     @FXML
-    private Label freeSpaceLabel;
-    @FXML
-    private Label totalSpaceLabel;
+    private Label hddSpaceInfo;
     @FXML
     private TableView<FileModel> leftDisplay;
     @FXML
     private TableView<FileModel> rightDisplay;
+    @FXML
+    private ComboBox<String> driveSelect;
 
     private FileAndFolderGatherer fileAndFolderGatherer;
     private ObservableList<FileModel> itemsForLeftDisplay;
@@ -41,9 +42,22 @@ public class MainController {
     @FXML
     public void initialize() throws IOException {
         createNecessaryObjects();
-        prepareDataForHDDSpaceLabels();
+        prepareDataForHDDSpaceLabel();
         fillDisplayWindowsWithData();
+        fillDataForDriveSelector();
+        displayFocusListener();
+        selectDriveListener();
+    }
 
+    private void selectDriveListener() {
+        driveSelect.valueProperty().addListener(new ChangeListener<String>() {
+            @Override public void changed(ObservableValue ov, String oldValue, String newValue) {
+                // to be implemented
+            }
+        });
+    }
+
+    private void displayFocusListener() {
         leftDisplay.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -56,12 +70,11 @@ public class MainController {
         });
     }
 
-    private void prepareDataForHDDSpaceLabels() throws IOException {
+    private void prepareDataForHDDSpaceLabel() throws IOException {
         HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
-        totalSpaceLabel.textProperty().setValue(hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(
-                HDDSpaceTracker.TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT));
-        freeSpaceLabel.textProperty().setValue(hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(
-                HDDSpaceTracker.TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT));
+        hddSpaceInfo.textProperty().setValue
+                (hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(HDDSpaceTracker.TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT) + " k from " +
+                        (hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(HDDSpaceTracker.TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT) + " free"));
     }
 
     private void createNecessaryObjects() {
@@ -115,5 +128,9 @@ public class MainController {
         TableColumn date = new TableColumn("date");
         date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
         table.getColumns().addAll(file, extension, size, date);
+    }
+
+    private void fillDataForDriveSelector() {
+        driveSelect.getItems().addAll("C", "D");
     }
 }

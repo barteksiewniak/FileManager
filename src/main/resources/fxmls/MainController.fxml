@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 <GridPane alignment="center" hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filemanager.controllers.MainController">
    <columnConstraints>
       <ColumnConstraints />
@@ -19,10 +17,13 @@
    <children>
       <Pane fx:id="mainPane" prefHeight="1180.0" prefWidth="2078.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
-            <Label fx:id="freeSpaceLabel" layoutX="21.0" layoutY="6.0" text="free space" />
-            <Label fx:id="totalSpaceLabel" layoutX="129.0" layoutY="6.0" text="total space" />
-            <TableView fx:id="leftDisplay" layoutX="-13.0" layoutY="23.0" onKeyPressed="#keyPressed" prefHeight="875.0" prefWidth="960.0" />
-            <TableView fx:id="rightDisplay" layoutX="955.0" layoutY="23.0" onKeyPressed="#keyPressed" prefHeight="875.0" prefWidth="960.0" />
+            <TableView fx:id="leftDisplay" layoutX="-7.0" layoutY="100.0" onKeyPressed="#keyPressed" prefHeight="798.0" prefWidth="954.0" />
+            <TableView fx:id="rightDisplay" layoutX="961.0" layoutY="100.0" onKeyPressed="#keyPressed" prefHeight="798.0" prefWidth="954.0" />
+            <ComboBox fx:id="driveSelect" layoutX="14.0" layoutY="57.0" prefHeight="25.0" prefWidth="58.0" />
+            <Label fx:id="HDDSpaceInfo" layoutX="92.0" layoutY="61.0" prefHeight="17.0" prefWidth="431.0" text="Label">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font></Label>
          </children></Pane>
    </children>
 </GridPane>
