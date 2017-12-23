@@ -34,6 +34,7 @@ public class FileToModelListConverter {
                     String extension = FilenameUtils.getExtension(x.getName());
                     model.setName(baseName);
                     model.setExtension(extension);
+                    model.setSize(String.valueOf(x.length()));
                 }
                 try {
                     BasicFileAttributes attr = Files.readAttributes(x.toPath(), BasicFileAttributes.class);

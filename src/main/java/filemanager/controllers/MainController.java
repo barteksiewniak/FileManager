@@ -4,7 +4,10 @@ import filemanager.core.FileAndFolderGatherer;
 import filemanager.core.FileToModelListConverter;
 import filemanager.core.HDDSpaceTracker;
 import filemanager.model.FileModel;
+import filemanager.model.FocusDisplay;
 import filemanager.utils.ApplicationProperties;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,12 +36,24 @@ public class MainController {
     private ObservableList<FileModel> itemsForRightDisplay;
     private ApplicationProperties properties;
     private FileToModelListConverter converter;
+    private FocusDisplay focusedDisplay;
 
     @FXML
     public void initialize() throws IOException {
         createNecessaryObjects();
         prepareDataForHDDSpaceLabels();
         fillDisplayWindowsWithData();
+
+        leftDisplay.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
+                    focusedDisplay = FocusDisplay.LEFT;
+                } else {
+                    focusedDisplay = FocusDisplay.RIGHT;
+                }
+            }
+        });
     }
 
     private void prepareDataForHDDSpaceLabels() throws IOException {
@@ -75,15 +90,22 @@ public class MainController {
 
     @FXML
     private void keyPressed(KeyEvent e) {
-        if (e.getCode() == KeyCode.ENTER) {
+        if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.ENTER) {
             itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
                     .getStructureForRootPath(leftDisplay.getSelectionModel().getSelectedItem().getFile().toString())));
             leftDisplay.setItems(itemsForLeftDisplay);
             leftDisplay.refresh();
         }
+
+        if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.ENTER) {
+            itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                    .getStructureForRootPath(rightDisplay.getSelectionModel().getSelectedItem().getFile().toString())));
+            rightDisplay.setItems(itemsForRightDisplay);
+            rightDisplay.refresh();
+        }
     }
 
-    public void createHeadersForTables(TableView<FileModel> table) {
+    private void createHeadersForTables(TableView<FileModel> table) {
         TableColumn file = new TableColumn("name");
         file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
         TableColumn extension = new TableColumn("extension");
