@@ -70,8 +70,10 @@ public class MainController {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if (newValue) {
                     focusedDisplay = FocusDisplay.LEFT;
+                    leftDisplay.getSelectionModel().select(0);
                 } else {
                     focusedDisplay = FocusDisplay.RIGHT;
+                    rightDisplay.getSelectionModel().select(0);
                 }
             }
         });
@@ -101,6 +103,7 @@ public class MainController {
     private void fillLeftDisplayWithData(String path) {
         itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
         leftDisplay.setItems(itemsForLeftDisplay);
+        leftDisplay.getSelectionModel().select(0);
     }
 
     private void fillRightDisplayWithData(String path) {
@@ -123,13 +126,23 @@ public class MainController {
             }
             leftDisplay.setItems(itemsForLeftDisplay);
             leftDisplay.refresh();
+            leftDisplay.getSelectionModel().select(0);
         }
 
         if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.ENTER) {
-            itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                    .getStructureForRootPath(rightDisplay.getSelectionModel().getSelectedItem().getFile().toString())));
+            String path = rightDisplay.getSelectionModel().getSelectedItem().getFile().toString();
+            if (!path.equals("...")) {
+                itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                        .getStructureForRootPath(path)));
+                currentFolder = path;
+            } else {
+                itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                        .getStructureForRootPath(converter.getParentPath(currentFolder))));
+                currentFolder = converter.getParentPath(currentFolder);
+            }
             rightDisplay.setItems(itemsForRightDisplay);
             rightDisplay.refresh();
+            rightDisplay.getSelectionModel().select(0);
         }
     }
 
