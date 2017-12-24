@@ -33,8 +33,6 @@ public class MainController {
     private ComboBox<String> driveSelect;
 
     private FileAndFolderGatherer fileAndFolderGatherer;
-    private ObservableList<FileModel> itemsForLeftDisplay;
-    private ObservableList<FileModel> itemsForRightDisplay;
     private ApplicationProperties properties;
     private FileToModelListConverter converter;
     private FocusDisplay focusedDisplay;
@@ -101,49 +99,43 @@ public class MainController {
     }
 
     private void fillLeftDisplayWithData(String path) {
-        itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
+        ObservableList<FileModel> itemsForLeftDisplay =
+                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
         leftDisplay.setItems(itemsForLeftDisplay);
         leftDisplay.getSelectionModel().select(0);
     }
 
     private void fillRightDisplayWithData(String path) {
-        itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
+        ObservableList<FileModel> itemsForRightDisplay =
+                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
         rightDisplay.setItems(itemsForRightDisplay);
     }
 
     @FXML
     private void keyPressed(KeyEvent e) {
         if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.ENTER) {
-            String path = leftDisplay.getSelectionModel().getSelectedItem().getFile().toString();
-            if (!path.equals("...")) {
-                itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                        .getStructureForRootPath(path)));
-                currentFolder = path;
-            } else {
-                itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                        .getStructureForRootPath(converter.getParentPath(currentFolder))));
-                currentFolder = converter.getParentPath(currentFolder);
-            }
-            leftDisplay.setItems(itemsForLeftDisplay);
-            leftDisplay.refresh();
-            leftDisplay.getSelectionModel().select(0);
+            updateAndRefreshListOfFilesForView(leftDisplay);
         }
-
         if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.ENTER) {
-            String path = rightDisplay.getSelectionModel().getSelectedItem().getFile().toString();
-            if (!path.equals("...")) {
-                itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                        .getStructureForRootPath(path)));
-                currentFolder = path;
-            } else {
-                itemsForRightDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                        .getStructureForRootPath(converter.getParentPath(currentFolder))));
-                currentFolder = converter.getParentPath(currentFolder);
-            }
-            rightDisplay.setItems(itemsForRightDisplay);
-            rightDisplay.refresh();
-            rightDisplay.getSelectionModel().select(0);
+            updateAndRefreshListOfFilesForView(rightDisplay);
         }
+    }
+
+    private void updateAndRefreshListOfFilesForView(TableView<FileModel> view) {
+        String path = view.getSelectionModel().getSelectedItem().getFile().toString();
+        ObservableList<FileModel> items;
+        if (!path.equals("...")) {
+            items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                    .getStructureForRootPath(path)));
+            currentFolder = path;
+        } else {
+            items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                    .getStructureForRootPath(converter.getParentPath(currentFolder))));
+            currentFolder = converter.getParentPath(currentFolder);
+        }
+        view.setItems(items);
+        view.refresh();
+        view.getSelectionModel().select(0);
     }
 
     private void createHeadersForTables(TableView<FileModel> table) {
