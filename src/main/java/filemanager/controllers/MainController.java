@@ -19,8 +19,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.io.File;
 import java.io.IOException;
-
 
 public class MainController {
     @FXML
@@ -38,6 +38,7 @@ public class MainController {
     private ApplicationProperties properties;
     private FileToModelListConverter converter;
     private FocusDisplay focusedDisplay;
+    private String currentFolder;
 
     @FXML
     public void initialize() throws IOException {
@@ -52,7 +53,13 @@ public class MainController {
     private void selectDriveListener() {
         driveSelect.valueProperty().addListener(new ChangeListener<String>() {
             @Override public void changed(ObservableValue ov, String oldValue, String newValue) {
-                // to be implemented
+                if (newValue.equals("C:\\")) {
+                    currentFolder = "C:\\";
+                    fillLeftDisplayWithData("C:\\");
+                } else if (newValue.equals("D:\\")) {
+                    currentFolder = "D:\\";
+                    fillLeftDisplayWithData("D:\\");
+                }
             }
         });
     }
@@ -104,8 +111,16 @@ public class MainController {
     @FXML
     private void keyPressed(KeyEvent e) {
         if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.ENTER) {
-            itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                    .getStructureForRootPath(leftDisplay.getSelectionModel().getSelectedItem().getFile().toString())));
+            String path = leftDisplay.getSelectionModel().getSelectedItem().getFile().toString();
+            if (!path.equals("...")) {
+                itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                        .getStructureForRootPath(path)));
+                currentFolder = path;
+            } else {
+                itemsForLeftDisplay = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
+                        .getStructureForRootPath(converter.getParentPath(currentFolder))));
+                currentFolder = converter.getParentPath(currentFolder);
+            }
             leftDisplay.setItems(itemsForLeftDisplay);
             leftDisplay.refresh();
         }
@@ -127,10 +142,21 @@ public class MainController {
         size.setCellValueFactory(new PropertyValueFactory<FileModel, String>("size"));
         TableColumn date = new TableColumn("date");
         date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
-        table.getColumns().addAll(file, extension, size, date);
+        file.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
+        extension.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
+        size.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+        date.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+        table.getColumns().addAll(file, size, extension, date);
     }
 
     private void fillDataForDriveSelector() {
-        driveSelect.getItems().addAll("C", "D");
+        File[] drives = File.listRoots();
+        if (drives != null && drives.length > 0) {
+            for (File aDrive : drives) {
+                driveSelect.getItems().add(aDrive.toString());
+            }
+        }
+        driveSelect.getSelectionModel().selectFirst();
+        currentFolder = driveSelect.getSelectionModel().selectedItemProperty().getValue();
     }
 }

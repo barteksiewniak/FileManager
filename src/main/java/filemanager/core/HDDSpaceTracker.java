@@ -13,9 +13,9 @@ public class HDDSpaceTracker {
         String result = "";
 
         if (selector == TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT) {
-            result = String.valueOf(file.getFreeSpace());
+            result = String.valueOf((file.getFreeSpace() / 1024));
         } else if (selector == TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT) {
-            result = String.valueOf(file.getTotalSpace());
+            result = String.valueOf((file.getTotalSpace() / 1024));
         }
 
         return separateSpaceByThreeCharsWithSpace(result);
