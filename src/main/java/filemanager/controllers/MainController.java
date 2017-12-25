@@ -191,7 +191,7 @@ public class MainController {
         }
     }
 
-    public TableView<FileModel> getActiveView() {
+    private TableView<FileModel> getActiveView() {
         TableView<FileModel> view;
         if (focusedDisplay == FocusDisplay.LEFT) {
             view = leftDisplay;

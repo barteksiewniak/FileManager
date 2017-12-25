@@ -2,6 +2,7 @@ package filemanager.core;
 
 import filemanager.model.FileModel;
 import filemanager.model.PositionType;
+import filemanager.utils.FileComparator;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class FileToModelListConverter {
                 destination.add(model);
             }
         });
-        destination.sort((f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
+        destination.sort(new FileComparator());
         return destination;
     }
 
