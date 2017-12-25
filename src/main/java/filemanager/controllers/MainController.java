@@ -5,7 +5,10 @@ import filemanager.core.FileToModelListConverter;
 import filemanager.core.HDDSpaceTracker;
 import filemanager.model.FileModel;
 import filemanager.model.FocusDisplay;
+import filemanager.model.PositionType;
 import filemanager.utils.ApplicationProperties;
+import filemanager.utils.Paths;
+import filemanager.utils.StageManager;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,9 +25,12 @@ import javafx.scene.input.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
+
 public class MainController {
     @FXML
     private Label hddSpaceInfo;
+    @FXML
+    private Label currentPathLeftDisplayLabel;
     @FXML
     private TableView<FileModel> leftDisplay;
     @FXML
@@ -37,6 +43,7 @@ public class MainController {
     private FileToModelListConverter converter;
     private FocusDisplay focusedDisplay;
     private String currentFolder;
+    private StageManager stageManager;
 
     @FXML
     public void initialize() throws IOException {
@@ -53,9 +60,11 @@ public class MainController {
             @Override public void changed(ObservableValue ov, String oldValue, String newValue) {
                 if (newValue.equals("C:\\")) {
                     currentFolder = "C:\\";
+                    currentPathLeftDisplayLabel.textProperty().setValue(currentFolder);
                     fillLeftDisplayWithData("C:\\");
                 } else if (newValue.equals("D:\\")) {
                     currentFolder = "D:\\";
+                    currentPathLeftDisplayLabel.textProperty().setValue(currentFolder);
                     fillLeftDisplayWithData("D:\\");
                 }
             }
@@ -69,9 +78,11 @@ public class MainController {
                 if (newValue) {
                     focusedDisplay = FocusDisplay.LEFT;
                     leftDisplay.getSelectionModel().select(0);
+                    rightDisplay.getSelectionModel().clearSelection();
                 } else {
                     focusedDisplay = FocusDisplay.RIGHT;
                     rightDisplay.getSelectionModel().select(0);
+                    leftDisplay.getSelectionModel().clearSelection();
                 }
             }
         });
@@ -88,6 +99,7 @@ public class MainController {
         fileAndFolderGatherer = new FileAndFolderGatherer();
         properties = new ApplicationProperties();
         converter = new FileToModelListConverter();
+        stageManager = new StageManager();
     }
 
     private void fillDisplayWindowsWithData() throws IOException {
@@ -112,12 +124,19 @@ public class MainController {
     }
 
     @FXML
-    private void keyPressed(KeyEvent e) {
+    private void keyPressed(KeyEvent e) throws IOException {
         if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.ENTER) {
             updateAndRefreshListOfFilesForView(leftDisplay);
         }
         if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.ENTER) {
             updateAndRefreshListOfFilesForView(rightDisplay);
+        }
+
+        if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.F4) {
+            openEditor();
+        }
+        if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.F4) {
+            openEditor();
         }
     }
 
@@ -128,10 +147,12 @@ public class MainController {
             items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
                     .getStructureForRootPath(path)));
             currentFolder = path;
+            currentPathLeftDisplayLabel.textProperty().setValue(path);
         } else {
             items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
                     .getStructureForRootPath(converter.getParentPath(currentFolder))));
             currentFolder = converter.getParentPath(currentFolder);
+            currentPathLeftDisplayLabel.textProperty().setValue(currentFolder);
         }
         view.setItems(items);
         view.refresh();
@@ -163,5 +184,16 @@ public class MainController {
         }
         driveSelect.getSelectionModel().selectFirst();
         currentFolder = driveSelect.getSelectionModel().selectedItemProperty().getValue();
+        currentPathLeftDisplayLabel.textProperty().setValue(currentFolder);
+    }
+
+    public void openEditor() throws IOException {
+        if (leftDisplay.getSelectionModel().getSelectedItem().getName() != null && leftDisplay.getSelectionModel().getSelectedItem().getType() == PositionType.FILE) {
+            ProcessBuilder processBuilder = new ProcessBuilder("Notepad.exe",
+                    leftDisplay.getSelectionModel().getSelectedItem().getFile().getPath());
+            processBuilder.start();
+        } else {
+            stageManager.openDialog(Paths.VIEWS.FILE_SELECT_DIALOG, 300, 300);
+        }
     }
 }

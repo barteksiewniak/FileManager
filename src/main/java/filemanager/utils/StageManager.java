@@ -17,4 +17,11 @@ public class StageManager {
         parent.setScene(new Scene(child));
         parent.show();
     }
+
+    public void openDialog(String fxml, double width, double height) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource(fxml));
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root, width, height));
+        stage.show();
+    }
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <GridPane alignment="center" hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filemanager.controllers.MainController">
@@ -20,10 +18,13 @@
             <TableView fx:id="leftDisplay" layoutX="-7.0" layoutY="100.0" onKeyPressed="#keyPressed" prefHeight="798.0" prefWidth="954.0" />
             <TableView fx:id="rightDisplay" layoutX="961.0" layoutY="100.0" onKeyPressed="#keyPressed" prefHeight="798.0" prefWidth="954.0" />
             <ComboBox fx:id="driveSelect" layoutX="14.0" layoutY="57.0" prefHeight="25.0" prefWidth="58.0" />
-            <Label fx:id="hddSpaceInfo" layoutX="92.0" layoutY="61.0" prefHeight="17.0" prefWidth="431.0" text="Label">
+            <Label fx:id="hddSpaceInfo" layoutX="92.0" layoutY="61.0" prefHeight="17.0" prefWidth="431.0" text="hddSpaceLabel">
                <font>
                   <Font name="System Bold" size="10.0" />
                </font></Label>
+            <Button fx:id="viewButton" layoutX="17.0" layoutY="950.0" mnemonicParsing="false" text="F3 View" />
+            <Button fx:id="editButton" layoutX="92.0" layoutY="950.0" mnemonicParsing="false" onAction="#openEditor" text="F4 Edit" />
+            <Label fx:id="currentPathLeftDisplayLabel" alignment="CENTER_RIGHT" layoutX="-7.0" layoutY="915.0" prefHeight="25.0" prefWidth="954.0" text="currentPath" />
          </children></Pane>
    </children>
 </GridPane>

@@ -28,6 +28,7 @@ public class MainApp extends Application {
         primaryStage.setMaximized(true);
         primaryStage.getIcons().add(new Image(Paths.IMAGES.APPLICATION_ICON));
         primaryStage.show();
+        Context.getInstance().setStageContext(primaryStage);
     }
 
     public static void main(String[] args) {
