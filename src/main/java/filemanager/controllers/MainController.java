@@ -125,17 +125,11 @@ public class MainController {
 
     @FXML
     private void keyPressed(KeyEvent e) throws IOException {
-        if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.ENTER) {
-            updateAndRefreshListOfFilesForView(leftDisplay);
-        }
-        if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.ENTER) {
-            updateAndRefreshListOfFilesForView(rightDisplay);
+        if (e.getCode() == KeyCode.ENTER) {
+            updateAndRefreshListOfFilesForView(getActiveView());
         }
 
-        if (focusedDisplay == FocusDisplay.LEFT && e.getCode() == KeyCode.F4) {
-            openEditor();
-        }
-        if (focusedDisplay == FocusDisplay.RIGHT && e.getCode() == KeyCode.F4) {
+        if (e.getCode() == KeyCode.F4) {
             openEditor();
         }
     }
@@ -188,12 +182,22 @@ public class MainController {
     }
 
     public void openEditor() throws IOException {
-        if (leftDisplay.getSelectionModel().getSelectedItem().getName() != null && leftDisplay.getSelectionModel().getSelectedItem().getType() == PositionType.FILE) {
+        if (getActiveView().getSelectionModel().getSelectedItem().getName() != null && getActiveView().getSelectionModel().getSelectedItem().getType() == PositionType.FILE) {
             ProcessBuilder processBuilder = new ProcessBuilder("Notepad.exe",
-                    leftDisplay.getSelectionModel().getSelectedItem().getFile().getPath());
+                    getActiveView().getSelectionModel().getSelectedItem().getFile().getPath());
             processBuilder.start();
         } else {
             stageManager.openDialog(Paths.VIEWS.FILE_SELECT_DIALOG, 300, 300);
         }
+    }
+
+    public TableView<FileModel> getActiveView() {
+        TableView<FileModel> view;
+        if (focusedDisplay == FocusDisplay.LEFT) {
+            view = leftDisplay;
+        } else {
+            view = rightDisplay;
+        }
+        return view;
     }
 }

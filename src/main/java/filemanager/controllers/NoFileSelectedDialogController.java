@@ -7,5 +7,4 @@ public class NoFileSelectedDialogController {
     public void okPressed() {
         // close stage impl.
     }
-
 }
