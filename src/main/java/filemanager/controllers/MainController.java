@@ -5,6 +5,7 @@ import filemanager.core.FileToModelListConverter;
 import filemanager.core.HDDSpaceTracker;
 import filemanager.model.FileModel;
 import filemanager.model.FocusDisplay;
+import filemanager.model.Method;
 import filemanager.model.PositionType;
 import filemanager.utils.ApplicationProperties;
 import filemanager.utils.Paths;
@@ -104,14 +105,14 @@ public class MainController {
         });
     }
 
-    private void prepareDataForHDDSpaceLabel() throws IOException {
+    private void prepareDataForHDDSpaceLabel() {
         HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
         hddSpaceInfoLeft.textProperty().setValue
-                (hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(HDDSpaceTracker.TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT) + " k from " +
-                        (hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(HDDSpaceTracker.TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT) + " free"));
+                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "C:/") + " k from " +
+                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "C:/") + " free"));
         hddSpaceInfoRight.textProperty().setValue
-                (hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(HDDSpaceTracker.TypeForHDDSpaceAmountSelector.FREE_SPACE_AMOUNT) + " k from " +
-                        (hddSpaceTracker.getAmountOfSpaceFromSelectedDrive(HDDSpaceTracker.TypeForHDDSpaceAmountSelector.TOTAL_SPACE_AMOUNT) + " free"));
+                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "D:/") + " k from " +
+                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "D:/") + " free"));
     }
 
     private void createNecessaryObjects() {
@@ -122,23 +123,23 @@ public class MainController {
     }
 
     private void fillDisplayWindowsWithData() throws IOException {
-        String rootPath = properties.getStringValueFromPropertiesForKey("root_path");
-        fillLeftDisplayWithData(rootPath);
-        fillRightDisplayWithData(rootPath);
+        final String ROOT_PATH = properties.getStringValueFromPropertiesForKey("root_path");
+        fillLeftDisplayWithData(ROOT_PATH);
+        fillRightDisplayWithData(ROOT_PATH);
         createHeadersForTables(leftDisplay);
         createHeadersForTables(rightDisplay);
     }
 
     private void fillLeftDisplayWithData(String path) {
         ObservableList<FileModel> itemsForLeftDisplay =
-                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
+                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
         leftDisplay.setItems(itemsForLeftDisplay);
         leftDisplay.getSelectionModel().select(0);
     }
 
     private void fillRightDisplayWithData(String path) {
         ObservableList<FileModel> itemsForRightDisplay =
-                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForRootPath(path)));
+                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
         rightDisplay.setItems(itemsForRightDisplay);
         rightDisplay.getSelectionModel().select(0);
     }
@@ -163,12 +164,12 @@ public class MainController {
         ObservableList<FileModel> items;
         if (!path.equals("...")) {
             items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                    .getStructureForRootPath(path)));
+                    .getStructureForPath(path)));
             selectedLeftDisplayDir = path;
             currentActiveDisplayPath.textProperty().setValue(path);
         } else {
             items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                    .getStructureForRootPath(converter.getParentPath(selectedLeftDisplayDir))));
+                    .getStructureForPath(converter.getParentPath(selectedLeftDisplayDir))));
             selectedLeftDisplayDir = converter.getParentPath(selectedLeftDisplayDir);
             currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
         }
@@ -180,7 +181,7 @@ public class MainController {
     private void refresh(TableView<FileModel> view) {
         ObservableList<FileModel> items;
         items = FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer
-                .getStructureForRootPath(selectedLeftDisplayDir)));
+                .getStructureForPath(selectedLeftDisplayDir)));
         view.setItems(items);
         view.refresh();
         view.getSelectionModel().select(0);

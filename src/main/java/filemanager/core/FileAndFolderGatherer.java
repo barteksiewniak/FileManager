@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FileAndFolderGatherer {
-    public List<File> getStructureForRootPath(String path) {
+    public List<File> getStructureForPath(String path) {
         File file = new File(path);
         File[] files = file.listFiles();
         ArrayList<File> fileArrayList = new ArrayList<>(Arrays.asList(files));
