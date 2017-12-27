@@ -26,6 +26,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainController {
@@ -51,6 +53,7 @@ public class MainController {
     private String selectedLeftDisplayDir;
     private String selectedRightDisplayDir;
     private StageManager stageManager;
+    private List<TableView<FileModel>> displays;
 
     @FXML
     public void initialize() throws IOException {
@@ -96,10 +99,19 @@ public class MainController {
                     focusedDisplay = FocusDisplay.LEFT;
                     leftDisplay.getSelectionModel().select(0);
                     rightDisplay.getSelectionModel().clearSelection();
-                } else {
+                    currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
+                }
+            }
+        });
+
+        rightDisplay.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
                     focusedDisplay = FocusDisplay.RIGHT;
                     rightDisplay.getSelectionModel().select(0);
                     leftDisplay.getSelectionModel().clearSelection();
+                    currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
                 }
             }
         });
@@ -116,18 +128,24 @@ public class MainController {
     }
 
     private void createNecessaryObjects() {
+        createAndFillDisplaysList();
         fileAndFolderGatherer = new FileAndFolderGatherer();
         properties = new ApplicationProperties();
         converter = new FileToModelListConverter();
         stageManager = new StageManager();
     }
 
+    private void createAndFillDisplaysList() {
+        displays = new ArrayList<>();
+        displays.add(leftDisplay);
+        displays.add(rightDisplay);
+    }
+
     private void fillDisplayWindowsWithData() throws IOException {
         final String ROOT_PATH = properties.getStringValueFromPropertiesForKey("root_path");
         fillLeftDisplayWithData(ROOT_PATH);
         fillRightDisplayWithData(ROOT_PATH);
-        createHeadersForTables(leftDisplay);
-        createHeadersForTables(rightDisplay);
+        createHeadersForTables(displays);
     }
 
     private void fillLeftDisplayWithData(String path) {
@@ -187,20 +205,22 @@ public class MainController {
         view.getSelectionModel().select(0);
     }
 
-    private void createHeadersForTables(TableView<FileModel> table) {
-        TableColumn file = new TableColumn("name");
-        file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
-        TableColumn extension = new TableColumn("extension");
-        extension.setCellValueFactory(new PropertyValueFactory<FileModel, String>("extension"));
-        TableColumn size = new TableColumn("size");
-        size.setCellValueFactory(new PropertyValueFactory<FileModel, String>("size"));
-        TableColumn date = new TableColumn("date");
-        date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
-        file.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
-        extension.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
-        size.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-        date.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-        table.getColumns().addAll(file, size, extension, date);
+    private void createHeadersForTables(List<TableView<FileModel>> tables) {
+        tables.forEach(table -> {
+            TableColumn file = new TableColumn("name");
+            file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
+            TableColumn extension = new TableColumn("extension");
+            extension.setCellValueFactory(new PropertyValueFactory<FileModel, String>("extension"));
+            TableColumn size = new TableColumn("size");
+            size.setCellValueFactory(new PropertyValueFactory<FileModel, String>("size"));
+            TableColumn date = new TableColumn("date");
+            date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
+            file.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
+            extension.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
+            size.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+            date.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+            table.getColumns().addAll(file, size, extension, date);
+        });
     }
 
     private void fillDataForDriveSelector() {
@@ -214,6 +234,7 @@ public class MainController {
         driveSelectLeft.getSelectionModel().selectFirst();
         driveSelectRight.getSelectionModel().selectFirst();
         selectedLeftDisplayDir = driveSelectLeft.getSelectionModel().selectedItemProperty().getValue();
+        selectedRightDisplayDir = driveSelectRight.getSelectionModel().selectedItemProperty().getValue();
         currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
     }
 
