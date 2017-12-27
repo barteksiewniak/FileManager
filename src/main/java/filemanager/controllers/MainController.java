@@ -123,7 +123,7 @@ public class MainController {
                 }
             });
             file.setCellFactory(new Callback<TableColumn<FileModel, FileModel>, TableCell<FileModel, FileModel>>() {
-                @Override public TableCell<FileModel, FileModel> call(TableColumn<FileModel, FileModel> btnCol) {
+                @Override public TableCell<FileModel, FileModel> call(TableColumn<FileModel, FileModel> file) {
                     return new TableCell<FileModel, FileModel>() {
                         final ImageView image = new ImageView();
                         @Override public void updateItem(final FileModel file, boolean empty) {
@@ -136,9 +136,9 @@ public class MainController {
                                 image.setFitHeight(20);
                                 image.setFitWidth(20);
                                 if (file.getType() == PositionType.FOLDER) {
-                                    image.setImage(file.dirImage);
+                                    image.setImage(Paths.IMAGES.DIR_IMAGE);
                                 } else {
-                                    image.setImage(file.fileImage);
+                                    image.setImage(Paths.IMAGES.FILE_IMAGE);
                                 }
                                 box.getChildren().addAll(image, vbox);
                                 setGraphic(box);
@@ -157,7 +157,7 @@ public class MainController {
             extension.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
             size.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
             date.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-            table.getColumns().addAll(file, size, extension, date);
+            table.getColumns().addAll(file, extension, size, date);
         });
     }
 

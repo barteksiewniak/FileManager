@@ -1,7 +1,5 @@
 package filemanager.model;
 
-import javafx.scene.image.Image;
-
 import java.io.File;
 
 public class FileModel {
@@ -12,8 +10,6 @@ public class FileModel {
     private String size;
     private String lastModifiedTime;
     private String attributes;
-    public final Image dirImage = new Image("images/folder.png");
-    public final Image fileImage = new Image("images/file.png");
 
     public PositionType getType() {
         return type;

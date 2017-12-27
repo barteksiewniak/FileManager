@@ -1,5 +1,7 @@
 package filemanager.utils;
 
+import javafx.scene.image.Image;
+
 public final class Paths {
     private Paths() {
     }
@@ -17,5 +19,7 @@ public final class Paths {
         }
 
         public static final String APPLICATION_ICON = "/images/disk-icon.png";
+        public static final Image DIR_IMAGE = new Image("images/folder.png");
+        public static final Image FILE_IMAGE = new Image("images/file.png");
     }
 }

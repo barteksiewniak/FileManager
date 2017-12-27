@@ -20,6 +20,7 @@ public class FileToModelListConverter {
     private static final Logger LOGGER = LogManager.getLogger(MainApp.class);
     public List<FileModel> convert(List<File> source) {
         ArrayList<FileModel> destination = new ArrayList<>();
+        HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
 
         source.forEach(x -> {
             if (!x.isHidden()) {
@@ -30,12 +31,13 @@ public class FileToModelListConverter {
                     model.setName("[" + x.getName() + "]");
                     model.setSize("<DIR>");
                 } else {
+
                     model.setType(PositionType.FILE);
                     String baseName = FilenameUtils.getBaseName(x.getName());
                     String extension = FilenameUtils.getExtension(x.getName());
                     model.setName(baseName);
                     model.setExtension(extension);
-                    model.setSize(String.valueOf(x.length()));
+                    model.setSize(hddSpaceTracker.displayFormatted(String.valueOf(x.length())));
                 }
                 try {
                     BasicFileAttributes attr = Files.readAttributes(x.toPath(), BasicFileAttributes.class);

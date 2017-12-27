@@ -18,7 +18,7 @@ public class HDDSpaceTracker {
         return displayFormatted(result);
     }
 
-    private String displayFormatted(String source) {
+    public String displayFormatted(String source) {
         // reverse string because we need to have grouping from right side
         String temporaryStringBuilderWithReversedString = new StringBuilder(source).reverse().toString();
         String[] temporaryArrayWithSplittedChars = temporaryStringBuilderWithReversedString.split("(?<=\\G...)");
