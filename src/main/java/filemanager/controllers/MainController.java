@@ -54,6 +54,8 @@ public class MainController {
     private String selectedRightDisplayDir;
     private StageManager stageManager;
     private List<TableView<FileModel>> displays;
+    private List<Object> leftDisplayProperties;
+    private List<Object> rightDisplayProperties;
 
     @FXML
     public void initialize() throws IOException {
@@ -65,16 +67,80 @@ public class MainController {
         selectDriveListener();
     }
 
+    private void createNecessaryObjects() {
+        createAndFillDisplaysList();
+        fileAndFolderGatherer = new FileAndFolderGatherer();
+        properties = new ApplicationProperties();
+        converter = new FileToModelListConverter();
+        stageManager = new StageManager();
+    }
+
+    private void prepareDataForHDDSpaceLabel() {
+        HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
+        hddSpaceInfoLeft.textProperty().setValue
+                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "C:/") + " k from " +
+                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "C:/") + " free"));
+        leftDisplayProperties.add(hddSpaceInfoLeft);
+        hddSpaceInfoRight.textProperty().setValue
+                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "D:/") + " k from " +
+                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "D:/") + " free"));
+        rightDisplayProperties.add(hddSpaceInfoRight);
+    }
+
+    private void createAndFillDisplaysList() {
+        leftDisplayProperties = new ArrayList<>();
+        rightDisplayProperties = new ArrayList<>();
+        displays = new ArrayList<>();
+        displays.add(leftDisplay);
+        displays.add(rightDisplay);
+    }
+
+    private void fillDisplaysWithData(String path) {
+        displays.forEach(display -> {
+            ObservableList<FileModel> itemsForLeftDisplay =
+                    FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
+            display.setItems(itemsForLeftDisplay);
+            display.getSelectionModel().select(0);
+            leftDisplayProperties.add(display);
+        });
+    }
+
+    private void fillDisplayWindowsWithData() throws IOException {
+        final String ROOT_PATH = properties.getStringValueFromPropertiesForKey("root_path");
+        fillDisplaysWithData(ROOT_PATH);
+        createHeadersForTables(displays);
+    }
+
+    private void createHeadersForTables(List<TableView<FileModel>> tables) {
+        tables.forEach(table -> {
+            TableColumn file = new TableColumn("name");
+            file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
+            TableColumn extension = new TableColumn("extension");
+            extension.setCellValueFactory(new PropertyValueFactory<FileModel, String>("extension"));
+            TableColumn size = new TableColumn("size");
+            size.setCellValueFactory(new PropertyValueFactory<FileModel, String>("size"));
+            TableColumn date = new TableColumn("date");
+            date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
+            file.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
+            extension.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
+            size.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+            date.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+            table.getColumns().addAll(file, size, extension, date);
+        });
+    }
+
     private void selectDriveListener() {
         driveSelectLeft.valueProperty().addListener((ov, oldValue, newValue) -> {
             if (newValue.equals("C:\\")) {
                 selectedLeftDisplayDir = "C:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                fillLeftDisplayWithData("C:\\");
+                fillDisplaysWithData("C:\\");
+                rightDisplayProperties.add(selectedLeftDisplayDir);
             } else if (newValue.equals("D:\\")) {
                 selectedLeftDisplayDir = "D:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                fillLeftDisplayWithData("D:\\");
+                fillDisplaysWithData("D:\\");
+                rightDisplayProperties.add(selectedLeftDisplayDir);
             }
         });
 
@@ -82,11 +148,14 @@ public class MainController {
             if (newValue.equals("C:\\")) {
                 selectedRightDisplayDir = "C:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                fillRightDisplayWithData("C:\\");
+                fillDisplaysWithData("C:\\");
+                rightDisplayProperties.add(selectedRightDisplayDir);
+
             } else if (newValue.equals("D:\\")) {
                 selectedRightDisplayDir = "D:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                fillRightDisplayWithData("D:\\");
+                fillDisplaysWithData("D:\\");
+                rightDisplayProperties.add(selectedRightDisplayDir);
             }
         });
     }
@@ -100,6 +169,7 @@ public class MainController {
                     leftDisplay.getSelectionModel().select(0);
                     rightDisplay.getSelectionModel().clearSelection();
                     currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
+                    leftDisplayProperties.add(focusedDisplay);
                 }
             }
         });
@@ -112,54 +182,10 @@ public class MainController {
                     rightDisplay.getSelectionModel().select(0);
                     leftDisplay.getSelectionModel().clearSelection();
                     currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
+                    rightDisplayProperties.add(focusedDisplay);
                 }
             }
         });
-    }
-
-    private void prepareDataForHDDSpaceLabel() {
-        HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
-        hddSpaceInfoLeft.textProperty().setValue
-                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "C:/") + " k from " +
-                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "C:/") + " free"));
-        hddSpaceInfoRight.textProperty().setValue
-                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "D:/") + " k from " +
-                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "D:/") + " free"));
-    }
-
-    private void createNecessaryObjects() {
-        createAndFillDisplaysList();
-        fileAndFolderGatherer = new FileAndFolderGatherer();
-        properties = new ApplicationProperties();
-        converter = new FileToModelListConverter();
-        stageManager = new StageManager();
-    }
-
-    private void createAndFillDisplaysList() {
-        displays = new ArrayList<>();
-        displays.add(leftDisplay);
-        displays.add(rightDisplay);
-    }
-
-    private void fillDisplayWindowsWithData() throws IOException {
-        final String ROOT_PATH = properties.getStringValueFromPropertiesForKey("root_path");
-        fillLeftDisplayWithData(ROOT_PATH);
-        fillRightDisplayWithData(ROOT_PATH);
-        createHeadersForTables(displays);
-    }
-
-    private void fillLeftDisplayWithData(String path) {
-        ObservableList<FileModel> itemsForLeftDisplay =
-                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
-        leftDisplay.setItems(itemsForLeftDisplay);
-        leftDisplay.getSelectionModel().select(0);
-    }
-
-    private void fillRightDisplayWithData(String path) {
-        ObservableList<FileModel> itemsForRightDisplay =
-                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
-        rightDisplay.setItems(itemsForRightDisplay);
-        rightDisplay.getSelectionModel().select(0);
     }
 
     @FXML
@@ -205,24 +231,6 @@ public class MainController {
         view.getSelectionModel().select(0);
     }
 
-    private void createHeadersForTables(List<TableView<FileModel>> tables) {
-        tables.forEach(table -> {
-            TableColumn file = new TableColumn("name");
-            file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
-            TableColumn extension = new TableColumn("extension");
-            extension.setCellValueFactory(new PropertyValueFactory<FileModel, String>("extension"));
-            TableColumn size = new TableColumn("size");
-            size.setCellValueFactory(new PropertyValueFactory<FileModel, String>("size"));
-            TableColumn date = new TableColumn("date");
-            date.setCellValueFactory(new PropertyValueFactory<FileModel, String>("lastModifiedTime"));
-            file.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
-            extension.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
-            size.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-            date.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-            table.getColumns().addAll(file, size, extension, date);
-        });
-    }
-
     private void fillDataForDriveSelector() {
         File[] drives = File.listRoots();
         if (drives != null && drives.length > 0) {
@@ -236,6 +244,8 @@ public class MainController {
         selectedLeftDisplayDir = driveSelectLeft.getSelectionModel().selectedItemProperty().getValue();
         selectedRightDisplayDir = driveSelectRight.getSelectionModel().selectedItemProperty().getValue();
         currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
+        leftDisplayProperties.add(driveSelectRight);
+        rightDisplayProperties.add(driveSelectRight);
     }
 
     public void openEditor() throws IOException {
