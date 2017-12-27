@@ -10,18 +10,20 @@ import filemanager.model.PositionType;
 import filemanager.utils.ApplicationProperties;
 import filemanager.utils.Paths;
 import filemanager.utils.StageManager;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -113,8 +115,38 @@ public class MainController {
 
     private void createHeadersForTables(List<TableView<FileModel>> tables) {
         tables.forEach(table -> {
-            TableColumn file = new TableColumn("name");
-            file.setCellValueFactory(new PropertyValueFactory<FileModel, String>("name"));
+            TableColumn<FileModel, FileModel> file = new TableColumn<>("name");
+            file.setMinWidth(150);
+            file.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<FileModel, FileModel>, ObservableValue<FileModel>>() {
+                @Override public ObservableValue<FileModel> call(TableColumn.CellDataFeatures<FileModel, FileModel> features) {
+                    return new ReadOnlyObjectWrapper(features.getValue());
+                }
+            });
+            file.setCellFactory(new Callback<TableColumn<FileModel, FileModel>, TableCell<FileModel, FileModel>>() {
+                @Override public TableCell<FileModel, FileModel> call(TableColumn<FileModel, FileModel> btnCol) {
+                    return new TableCell<FileModel, FileModel>() {
+                        final ImageView image = new ImageView();
+                        @Override public void updateItem(final FileModel file, boolean empty) {
+                            super.updateItem(file, empty);
+                            if (file != null) {
+                                HBox box= new HBox();
+                                box.setSpacing(5) ;
+                                VBox vbox = new VBox();
+                                vbox.getChildren().add(new Label(file.getName()));
+                                image.setFitHeight(20);
+                                image.setFitWidth(20);
+                                if (file.getType() == PositionType.FOLDER) {
+                                    image.setImage(file.dirImage);
+                                } else {
+                                    image.setImage(file.fileImage);
+                                }
+                                box.getChildren().addAll(image, vbox);
+                                setGraphic(box);
+                            }
+                        }
+                    };
+                }
+            });
             TableColumn extension = new TableColumn("extension");
             extension.setCellValueFactory(new PropertyValueFactory<FileModel, String>("extension"));
             TableColumn size = new TableColumn("size");
