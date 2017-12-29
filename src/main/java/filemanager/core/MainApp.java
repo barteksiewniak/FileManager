@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -26,7 +25,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("File Manager " + properties.getStringValueFromPropertiesForKey("version_number"));
         primaryStage.setScene(new Scene(root));
         primaryStage.setMaximized(true);
-        primaryStage.getIcons().add(new Image(Paths.IMAGES.APPLICATION_ICON));
+        primaryStage.getIcons().add(Paths.IMAGES.APPLICATION_ICON);
         primaryStage.show();
         Context.getInstance().setStageContext(primaryStage);
     }

@@ -21,8 +21,10 @@ public class FileToModelListConverter {
     public List<FileModel> convert(List<File> source) {
         ArrayList<FileModel> destination = new ArrayList<>();
         HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
-
         source.forEach(x -> {
+            if (x.getPath().equals("C:\\Documents and Settings")) {
+                return;
+            }
             if (!x.isHidden()) {
                 FileModel model = new FileModel();
                 model.setFile(x);
@@ -31,7 +33,6 @@ public class FileToModelListConverter {
                     model.setName("[" + x.getName() + "]");
                     model.setSize("<DIR>");
                 } else {
-
                     model.setType(PositionType.FILE);
                     String baseName = FilenameUtils.getBaseName(x.getName());
                     String extension = FilenameUtils.getExtension(x.getName());

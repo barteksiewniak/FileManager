@@ -18,7 +18,7 @@ public final class Paths {
         private IMAGES() {
         }
 
-        public static final String APPLICATION_ICON = "/images/disk-icon.png";
+        public static final Image APPLICATION_ICON = new Image("images/disk-icon.png");
         public static final Image DIR_IMAGE = new Image("images/folder.png");
         public static final Image FILE_IMAGE = new Image("images/file.png");
     }
