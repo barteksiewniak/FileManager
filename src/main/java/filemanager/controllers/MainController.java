@@ -107,6 +107,13 @@ public class MainController {
         });
     }
 
+    private void fillDisplaysWithDataForSelector(TableView<FileModel> display, String path) {
+        ObservableList<FileModel> items =
+                FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
+        display.setItems(items);
+        display.getSelectionModel().select(0);
+    }
+
     private void fillDisplayWindowsWithData() throws IOException {
         final String ROOT_PATH = properties.getStringValueFromPropertiesForKey("root_path");
         fillDisplaysWithData(ROOT_PATH);
@@ -118,19 +125,23 @@ public class MainController {
             TableColumn<FileModel, FileModel> file = new TableColumn<>("name");
             file.setMinWidth(150);
             file.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<FileModel, FileModel>, ObservableValue<FileModel>>() {
-                @Override public ObservableValue<FileModel> call(TableColumn.CellDataFeatures<FileModel, FileModel> features) {
+                @Override
+                public ObservableValue<FileModel> call(TableColumn.CellDataFeatures<FileModel, FileModel> features) {
                     return new ReadOnlyObjectWrapper(features.getValue());
                 }
             });
             file.setCellFactory(new Callback<TableColumn<FileModel, FileModel>, TableCell<FileModel, FileModel>>() {
-                @Override public TableCell<FileModel, FileModel> call(TableColumn<FileModel, FileModel> file) {
+                @Override
+                public TableCell<FileModel, FileModel> call(TableColumn<FileModel, FileModel> file) {
                     return new TableCell<FileModel, FileModel>() {
                         final ImageView image = new ImageView();
-                        @Override public void updateItem(final FileModel file, boolean empty) {
+
+                        @Override
+                        public void updateItem(final FileModel file, boolean empty) {
                             super.updateItem(file, empty);
                             if (file != null) {
-                                HBox box= new HBox();
-                                box.setSpacing(5) ;
+                                HBox box = new HBox();
+                                box.setSpacing(5);
                                 VBox vbox = new VBox();
                                 vbox.getChildren().add(new Label(file.getName()));
                                 image.setFitHeight(20);
@@ -166,13 +177,15 @@ public class MainController {
             if (newValue.equals("C:\\")) {
                 selectedLeftDisplayDir = "C:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                fillDisplaysWithData("C:\\");
-                rightDisplayProperties.add(selectedLeftDisplayDir);
+                fillDisplaysWithDataForSelector(leftDisplay, "C:\\");
+                leftDisplayProperties.add(selectedLeftDisplayDir);
+                leftDisplay.refresh();
             } else if (newValue.equals("D:\\")) {
                 selectedLeftDisplayDir = "D:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                fillDisplaysWithData("D:\\");
-                rightDisplayProperties.add(selectedLeftDisplayDir);
+                fillDisplaysWithDataForSelector(leftDisplay, "D:\\");
+                leftDisplayProperties.add(selectedLeftDisplayDir);
+                leftDisplay.refresh();
             }
         });
 
@@ -180,14 +193,16 @@ public class MainController {
             if (newValue.equals("C:\\")) {
                 selectedRightDisplayDir = "C:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                fillDisplaysWithData("C:\\");
+                fillDisplaysWithDataForSelector(rightDisplay, "C:\\");
                 rightDisplayProperties.add(selectedRightDisplayDir);
+                rightDisplay.refresh();
 
             } else if (newValue.equals("D:\\")) {
                 selectedRightDisplayDir = "D:\\";
                 currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                fillDisplaysWithData("D:\\");
+                fillDisplaysWithDataForSelector(rightDisplay, "D:\\");
                 rightDisplayProperties.add(selectedRightDisplayDir);
+                rightDisplay.refresh();
             }
         });
     }
@@ -276,7 +291,7 @@ public class MainController {
         selectedLeftDisplayDir = driveSelectLeft.getSelectionModel().selectedItemProperty().getValue();
         selectedRightDisplayDir = driveSelectRight.getSelectionModel().selectedItemProperty().getValue();
         currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-        leftDisplayProperties.add(driveSelectRight);
+        leftDisplayProperties.add(driveSelectLeft);
         rightDisplayProperties.add(driveSelectRight);
     }
 

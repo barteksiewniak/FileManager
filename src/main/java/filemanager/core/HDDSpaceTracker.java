@@ -26,7 +26,7 @@ public class HDDSpaceTracker {
         StringBuilder result = new StringBuilder();
 
         for (String row : temporaryArrayWithSplittedChars) {
-            result.append(row + " ");
+            result.append(row).append(" ");
         }
 
         // again reversing the string for proper order
