@@ -8,6 +8,7 @@ import filemanager.model.FocusDisplay;
 import filemanager.model.Method;
 import filemanager.model.PositionType;
 import filemanager.utils.ApplicationProperties;
+import filemanager.utils.Constants;
 import filemanager.utils.Paths;
 import filemanager.utils.StageManager;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -174,63 +175,62 @@ public class MainController {
 
     private void selectDriveListener() {
         driveSelectLeft.valueProperty().addListener((ov, oldValue, newValue) -> {
-            if (newValue.equals("C:\\")) {
-                selectedLeftDisplayDir = "C:\\";
-                currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                fillDisplaysWithDataForSelector(leftDisplay, "C:\\");
-                leftDisplayProperties.add(selectedLeftDisplayDir);
-                leftDisplay.refresh();
-            } else if (newValue.equals("D:\\")) {
-                selectedLeftDisplayDir = "D:\\";
-                currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                fillDisplaysWithDataForSelector(leftDisplay, "D:\\");
-                leftDisplayProperties.add(selectedLeftDisplayDir);
-                leftDisplay.refresh();
-            }
+            leftDriveDetector(newValue);
         });
 
         driveSelectRight.valueProperty().addListener((ov, oldValue, newValue) -> {
-            if (newValue.equals("C:\\")) {
-                selectedRightDisplayDir = "C:\\";
-                currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                fillDisplaysWithDataForSelector(rightDisplay, "C:\\");
-                rightDisplayProperties.add(selectedRightDisplayDir);
-                rightDisplay.refresh();
-
-            } else if (newValue.equals("D:\\")) {
-                selectedRightDisplayDir = "D:\\";
-                currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                fillDisplaysWithDataForSelector(rightDisplay, "D:\\");
-                rightDisplayProperties.add(selectedRightDisplayDir);
-                rightDisplay.refresh();
-            }
+            rightDriveDetector(newValue);
         });
     }
 
+    private void leftDriveDetector(String newValue) {
+        if (newValue.equals(Constants.C_DRIVE)) {
+            leftDriveListenerConfig(Constants.C_DRIVE);
+        } else if (newValue.equals(Constants.D_DRIVE)) {
+            leftDriveListenerConfig(Constants.D_DRIVE);
+        }
+    }
+
+    private void rightDriveDetector(String newValue) {
+        if (newValue.equals(Constants.C_DRIVE)) {
+            rightDriveListenerConfig(Constants.C_DRIVE);
+        } else if (newValue.equals(Constants.D_DRIVE)) {
+            rightDriveListenerConfig(Constants.D_DRIVE);
+        }
+    }
+
+    private void leftDriveListenerConfig(String leftDisplayDir) {
+        currentActiveDisplayPath.textProperty().setValue(leftDisplayDir);
+        fillDisplaysWithDataForSelector(leftDisplay, leftDisplayDir);
+        leftDisplayProperties.add(leftDisplayDir);
+        leftDisplay.refresh();
+    }
+
+    private void rightDriveListenerConfig(String rightDisplayDir) {
+        currentActiveDisplayPath.textProperty().setValue(rightDisplayDir);
+        fillDisplaysWithDataForSelector(rightDisplay, rightDisplayDir);
+        rightDisplayProperties.add(rightDisplayDir);
+        rightDisplay.refresh();
+    }
+
     private void displayFocusListener() {
-        leftDisplay.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (newValue) {
-                    focusedDisplay = FocusDisplay.LEFT;
-                    leftDisplay.getSelectionModel().select(0);
-                    rightDisplay.getSelectionModel().clearSelection();
-                    currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                    leftDisplayProperties.add(focusedDisplay);
-                }
+        leftDisplay.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                focusedDisplay = FocusDisplay.LEFT;
+                leftDisplay.getSelectionModel().select(0);
+                rightDisplay.getSelectionModel().clearSelection();
+                currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
+                leftDisplayProperties.add(focusedDisplay);
             }
         });
 
-        rightDisplay.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (newValue) {
-                    focusedDisplay = FocusDisplay.RIGHT;
-                    rightDisplay.getSelectionModel().select(0);
-                    leftDisplay.getSelectionModel().clearSelection();
-                    currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                    rightDisplayProperties.add(focusedDisplay);
-                }
+        rightDisplay.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                focusedDisplay = FocusDisplay.RIGHT;
+                rightDisplay.getSelectionModel().select(0);
+                leftDisplay.getSelectionModel().clearSelection();
+                currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
+                rightDisplayProperties.add(focusedDisplay);
             }
         });
     }
