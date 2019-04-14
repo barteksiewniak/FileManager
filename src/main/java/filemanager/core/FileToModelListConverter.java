@@ -3,6 +3,7 @@ package filemanager.core;
 import filemanager.model.FileModel;
 import filemanager.model.PositionType;
 import filemanager.utils.FileComparator;
+import filemanager.utils.PreferencesManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -15,12 +16,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class FileToModelListConverter {
     private static final Logger LOGGER = LogManager.getLogger(MainApp.class);
     public List<FileModel> convert(List<File> source) {
+        PreferencesManager preferencesManager = new PreferencesManager();
         ArrayList<FileModel> destination = new ArrayList<>();
-        HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
+        HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker(preferencesManager);
         source.forEach(x -> {
             if (x.getPath().equals("C:\\Documents and Settings")) {
                 return;

@@ -5,14 +5,9 @@ import filemanager.core.FileToModelListConverter;
 import filemanager.core.HDDSpaceTracker;
 import filemanager.model.FileModel;
 import filemanager.model.FocusDisplay;
-import filemanager.model.Method;
 import filemanager.model.PositionType;
-import filemanager.utils.ApplicationProperties;
-import filemanager.utils.Constants;
-import filemanager.utils.Paths;
-import filemanager.utils.StageManager;
+import filemanager.utils.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -57,12 +52,13 @@ public class MainController {
     private String selectedRightDisplayDir;
     private StageManager stageManager;
     private List<TableView<FileModel>> displays;
-    private List<Object> leftDisplayProperties;
-    private List<Object> rightDisplayProperties;
+    private HDDSpaceTracker hddSpaceTracker;
+    private PreferencesManager preferencesManager;
 
     @FXML
     public void initialize() throws IOException {
         createNecessaryObjects();
+        preferencesManager.setDefaultPreferences();
         prepareDataForHDDSpaceLabel();
         fillDisplayWindowsWithData();
         fillDataForDriveSelector();
@@ -76,35 +72,36 @@ public class MainController {
         properties = new ApplicationProperties();
         converter = new FileToModelListConverter();
         stageManager = new StageManager();
+        preferencesManager = new PreferencesManager();
+        hddSpaceTracker = new HDDSpaceTracker(preferencesManager);
     }
 
     private void prepareDataForHDDSpaceLabel() {
-        HDDSpaceTracker hddSpaceTracker = new HDDSpaceTracker();
-        hddSpaceInfoLeft.textProperty().setValue
-                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "C:/") + " k from " +
-                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "C:/") + " free"));
-        leftDisplayProperties.add(hddSpaceInfoLeft);
-        hddSpaceInfoRight.textProperty().setValue
-                (hddSpaceTracker.calcFreeAndTotalSpace(Method.FREE_SPACE_AMOUNT, "D:/") + " k from " +
-                        (hddSpaceTracker.calcFreeAndTotalSpace(Method.TOTAL_SPACE_AMOUNT, "D:/") + " free"));
-        rightDisplayProperties.add(hddSpaceInfoRight);
+        hddSpaceTracker.setSpaceInfoForLeftDisplay(hddSpaceInfoLeft);
+        hddSpaceTracker.setSpaceInfoForRightDisplay(hddSpaceInfoRight);
     }
 
     private void createAndFillDisplaysList() {
-        leftDisplayProperties = new ArrayList<>();
-        rightDisplayProperties = new ArrayList<>();
         displays = new ArrayList<>();
         displays.add(leftDisplay);
         displays.add(rightDisplay);
     }
 
-    private void fillDisplaysWithData(String path) {
+    private void fillDisplaysWithData() {
+        ObservableList<FileModel> itemsForLeftDisplay =
+                FXCollections.observableArrayList(converter.convert
+                        (fileAndFolderGatherer.getStructureForPath(preferencesManager.getPreferencesForKey(Constants.Prefs.LAST_SELECTED_DRIVE_FOR_LEFT_DISPLAY))));
+        ObservableList<FileModel> itemsForRightDisplay =
+                FXCollections.observableArrayList(converter.convert
+                        (fileAndFolderGatherer.getStructureForPath(preferencesManager.getPreferencesForKey(Constants.Prefs.LAST_SELECTED_DRIVE_FOR_RIGHT_DISPLAY))));
+
         displays.forEach(display -> {
-            ObservableList<FileModel> itemsForLeftDisplay =
-                    FXCollections.observableArrayList(converter.convert(fileAndFolderGatherer.getStructureForPath(path)));
-            display.setItems(itemsForLeftDisplay);
+            if ("leftDisplay".equals(display.getId())) {
+                display.setItems(itemsForLeftDisplay);
+            } else {
+                display.setItems(itemsForRightDisplay);
+            }
             display.getSelectionModel().select(0);
-            leftDisplayProperties.add(display);
         });
     }
 
@@ -115,9 +112,8 @@ public class MainController {
         display.getSelectionModel().select(0);
     }
 
-    private void fillDisplayWindowsWithData() throws IOException {
-        final String ROOT_PATH = properties.getStringValueFromPropertiesForKey("root_path");
-        fillDisplaysWithData(ROOT_PATH);
+    private void fillDisplayWindowsWithData() {
+        fillDisplaysWithData();
         createHeadersForTables(displays);
     }
 
@@ -125,7 +121,8 @@ public class MainController {
         tables.forEach(table -> {
             TableColumn<FileModel, FileModel> file = new TableColumn<>("name");
             file.setMinWidth(150);
-            file.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<FileModel, FileModel>, ObservableValue<FileModel>>() {
+            file.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<FileModel, FileModel>,
+                    ObservableValue<FileModel>>() {
                 @Override
                 public ObservableValue<FileModel> call(TableColumn.CellDataFeatures<FileModel, FileModel> features) {
                     return new ReadOnlyObjectWrapper(features.getValue());
@@ -189,6 +186,7 @@ public class MainController {
         } else if (newValue.equals(Constants.D_DRIVE)) {
             leftDriveListenerConfig(Constants.D_DRIVE);
         }
+        prepareDataForHDDSpaceLabel();
     }
 
     private void rightDriveDetector(String newValue) {
@@ -197,20 +195,23 @@ public class MainController {
         } else if (newValue.equals(Constants.D_DRIVE)) {
             rightDriveListenerConfig(Constants.D_DRIVE);
         }
+        prepareDataForHDDSpaceLabel();
     }
 
     private void leftDriveListenerConfig(String leftDisplayDir) {
         currentActiveDisplayPath.textProperty().setValue(leftDisplayDir);
         fillDisplaysWithDataForSelector(leftDisplay, leftDisplayDir);
-        leftDisplayProperties.add(leftDisplayDir);
         leftDisplay.refresh();
+        preferencesManager.updateValueInPreferencesForKey(leftDisplayDir,
+                Constants.Prefs.LAST_SELECTED_DRIVE_FOR_LEFT_DISPLAY);
     }
 
     private void rightDriveListenerConfig(String rightDisplayDir) {
         currentActiveDisplayPath.textProperty().setValue(rightDisplayDir);
         fillDisplaysWithDataForSelector(rightDisplay, rightDisplayDir);
-        rightDisplayProperties.add(rightDisplayDir);
         rightDisplay.refresh();
+        preferencesManager.updateValueInPreferencesForKey(rightDisplayDir,
+                Constants.Prefs.LAST_SELECTED_DRIVE_FOR_RIGHT_DISPLAY);
     }
 
     private void displayFocusListener() {
@@ -220,7 +221,6 @@ public class MainController {
                 leftDisplay.getSelectionModel().select(0);
                 rightDisplay.getSelectionModel().clearSelection();
                 currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-                leftDisplayProperties.add(focusedDisplay);
             }
         });
 
@@ -230,7 +230,6 @@ public class MainController {
                 rightDisplay.getSelectionModel().select(0);
                 leftDisplay.getSelectionModel().clearSelection();
                 currentActiveDisplayPath.textProperty().setValue(selectedRightDisplayDir);
-                rightDisplayProperties.add(focusedDisplay);
             }
         });
     }
@@ -286,13 +285,11 @@ public class MainController {
                 driveSelectRight.getItems().add(aDrive.toString());
             }
         }
-        driveSelectLeft.getSelectionModel().selectFirst();
-        driveSelectRight.getSelectionModel().selectFirst();
+        driveSelectLeft.getSelectionModel().select(preferencesManager.getPreferencesForKey(Constants.Prefs.LAST_SELECTED_DRIVE_FOR_LEFT_DISPLAY));
+        driveSelectRight.getSelectionModel().select(preferencesManager.getPreferencesForKey(Constants.Prefs.LAST_SELECTED_DRIVE_FOR_RIGHT_DISPLAY));
         selectedLeftDisplayDir = driveSelectLeft.getSelectionModel().selectedItemProperty().getValue();
         selectedRightDisplayDir = driveSelectRight.getSelectionModel().selectedItemProperty().getValue();
         currentActiveDisplayPath.textProperty().setValue(selectedLeftDisplayDir);
-        leftDisplayProperties.add(driveSelectLeft);
-        rightDisplayProperties.add(driveSelectRight);
     }
 
     public void openEditor() throws IOException {
