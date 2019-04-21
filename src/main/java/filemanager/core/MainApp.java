@@ -23,7 +23,9 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource(Paths.VIEWS.MAIN_APPLICATION));
         primaryStage.setTitle("File Manager " + properties.getStringValueFromPropertiesForKey("version_number"));
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add("/styles/style.css");
+        primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.getIcons().add(Paths.IMAGES.APPLICATION_ICON);
         primaryStage.show();

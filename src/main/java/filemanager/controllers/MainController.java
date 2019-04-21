@@ -6,7 +6,10 @@ import filemanager.core.HDDSpaceTracker;
 import filemanager.model.FileModel;
 import filemanager.model.FocusDisplay;
 import filemanager.model.PositionType;
-import filemanager.utils.*;
+import filemanager.utils.Constants;
+import filemanager.utils.Paths;
+import filemanager.utils.PreferencesManager;
+import filemanager.utils.StageManager;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -43,9 +46,10 @@ public class MainController {
     private ComboBox<String> driveSelectLeft;
     @FXML
     private ComboBox<String> driveSelectRight;
+    @FXML
+    private MenuBar menuBar;
 
     private FileAndFolderGatherer fileAndFolderGatherer;
-    private ApplicationProperties properties;
     private FileToModelListConverter converter;
     private FocusDisplay focusedDisplay;
     private String selectedLeftDisplayDir;
@@ -56,7 +60,7 @@ public class MainController {
     private PreferencesManager preferencesManager;
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize() {
         createNecessaryObjects();
         preferencesManager.setDefaultPreferences();
         prepareDataForHDDSpaceLabel();
@@ -69,7 +73,6 @@ public class MainController {
     private void createNecessaryObjects() {
         createAndFillDisplaysList();
         fileAndFolderGatherer = new FileAndFolderGatherer();
-        properties = new ApplicationProperties();
         converter = new FileToModelListConverter();
         stageManager = new StageManager();
         preferencesManager = new PreferencesManager();
@@ -320,5 +323,9 @@ public class MainController {
         FileUtils.copyFileToDirectory(file, destinationDir);
         refresh(leftDisplay);
         refresh(rightDisplay);
+    }
+
+    public void test() {
+
     }
 }
