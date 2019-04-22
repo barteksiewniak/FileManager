@@ -11,7 +11,8 @@ public final class Paths {
         }
 
         public static final String MAIN_APPLICATION = "/fxmls/MainStage.fxml";
-        public static final String FILE_SELECT_DIALOG = "/fxmls/NoFileSelectedDialogController.fxml";
+        public static final String FILE_SELECT_DIALOG = "/fxmls/NoFileSelectedDialog.fxml";
+        public static final String COMPRESS_FILE_DIALOG = "/fxmls/CompressFileDialog.fxml";
     }
 
     public static final class IMAGES {

@@ -1,4 +1,4 @@
-package filemanager.controllers;
+package filemanager.controllers.mainstage;
 
 import filemanager.core.FileAndFolderGatherer;
 import filemanager.core.FileToModelListConverter;
@@ -46,8 +46,6 @@ public class MainStageController {
     private ComboBox<String> driveSelectLeft;
     @FXML
     private ComboBox<String> driveSelectRight;
-    @FXML
-    private MenuBar menuBar;
 
     private FileAndFolderGatherer fileAndFolderGatherer;
     private FileToModelListConverter converter;
@@ -323,9 +321,5 @@ public class MainStageController {
         FileUtils.copyFileToDirectory(file, destinationDir);
         refresh(leftDisplay);
         refresh(rightDisplay);
-    }
-
-    public void test() {
-
     }
 }

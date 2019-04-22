@@ -1,4 +1,4 @@
-package filemanager.controllers;
+package filemanager.controllers.mainstage;
 
 import javafx.fxml.FXML;
 

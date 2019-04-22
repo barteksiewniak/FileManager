@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<MenuBar fx:id="menuBar" layoutX="-7.0" prefHeight="22.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filemanager.controllers.MenuBarController">
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+
+<MenuBar fx:id="menuBar" layoutX="-7.0" prefHeight="22.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filemanager.controllers.menubar.MenuBarController">
     <menus>
         <Menu mnemonicParsing="false" text="File">
             <items>
-                <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#test" text="Close" />
+            <MenuItem fx:id="compressMenuItem" mnemonicParsing="false" onAction="#compressSelected" text="Compress..." />
+                <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close" />
             </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
