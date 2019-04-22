@@ -299,7 +299,7 @@ public class MainStageController {
                     getActiveView().getSelectionModel().getSelectedItem().getFile().getPath());
             processBuilder.start();
         } else {
-            stageManager.openDialog(Paths.VIEWS.FILE_SELECT_DIALOG, 300, 300);
+            stageManager.openDialog(Paths.VIEWS.FILE_SELECT_DIALOG);
         }
     }
 

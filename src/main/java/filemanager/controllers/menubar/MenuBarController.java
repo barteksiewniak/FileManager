@@ -22,7 +22,7 @@ public class MenuBarController {
 
     public void compressSelected() {
         try {
-            stageManager.openDialog(COMPRESS_FILE_DIALOG, 300, 300);
+            stageManager.openDialog(COMPRESS_FILE_DIALOG);
         } catch (Exception e) {
             e.getStackTrace();
         }
