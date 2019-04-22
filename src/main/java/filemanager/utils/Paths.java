@@ -10,7 +10,7 @@ public final class Paths {
         private VIEWS() {
         }
 
-        public static final String MAIN_APPLICATION = "/fxmls/MainController.fxml";
+        public static final String MAIN_APPLICATION = "/fxmls/MainStage.fxml";
         public static final String FILE_SELECT_DIALOG = "/fxmls/NoFileSelectedDialogController.fxml";
     }
 

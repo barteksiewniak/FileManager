@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainController {
+public class MainStageController {
     @FXML
     private Label hddSpaceInfoLeft;
     @FXML
